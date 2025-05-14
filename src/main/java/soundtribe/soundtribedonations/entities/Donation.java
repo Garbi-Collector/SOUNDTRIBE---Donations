@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -22,6 +23,10 @@ public class Donation {
     private Long donor; //usuario que dono
 
     private Integer amount;
+
+    private BigDecimal realAmount;
+
+    private Boolean success;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
