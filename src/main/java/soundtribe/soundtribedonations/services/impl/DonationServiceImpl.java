@@ -41,6 +41,8 @@ public class DonationServiceImpl implements DonationService {
 
     @Value("${access.token}")
     private String accessToken;
+
+    //http://soundtribe.art:4200
     @Value("${app.front.url}")
     private String front;
 
@@ -93,7 +95,9 @@ public class DonationServiceImpl implements DonationService {
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(List.of(itemRequest))
                     .backUrls(backUrls)
+                    .autoReturn("approved")
                     .build();
+
 
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
@@ -111,9 +115,12 @@ public class DonationServiceImpl implements DonationService {
 
             return new DonationResponse(preference.getInitPoint(), saveDonation.getId());
 
-        } catch (MPApiException | MPException e) {
+        } catch (MPException e) {
             logger.error("Error en MercadoPago: {}", e.getMessage());
             throw new RuntimeException("Error en MercadoPago: " + e.getMessage());
+        } catch (MPApiException e) {
+            logger.error("Respuesta de MercadoPago: {}", e.getApiResponse().getContent());
+            throw new RuntimeException("Error en MercadoPago: " + e.getApiResponse().getContent());
         } catch (Exception e) {
             logger.error("Error inesperado: {}", e.getMessage());
             throw new RuntimeException("Error inesperado: " + e.getMessage());
