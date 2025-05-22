@@ -20,6 +20,9 @@ public class Donation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * en caso de que no tenga un donador como tal, es muy probable que sea porque el usuario elimino su cuenta
+     */
     private Long donor; //usuario que dono
 
     private Integer amount;

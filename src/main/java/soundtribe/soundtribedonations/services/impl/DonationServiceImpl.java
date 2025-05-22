@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import soundtribe.soundtribedonations.dtos.DonationResponse;
@@ -154,6 +155,40 @@ public class DonationServiceImpl implements DonationService {
                         .build()
         );
     }
+
+
+    @Transactional
+    @Async
+    @Override
+    public void EliminarUsuarioDonacion(String token) {
+        Map<String, Object> userInfo = externalJWTService.validateToken(token);
+        Boolean isUser = (Boolean) userInfo.get("valid");
+
+        if (!Boolean.TRUE.equals(isUser)) {
+            throw new RuntimeException("No eres un usuario válido");
+        }
+
+        Integer userIdInteger = (Integer) userInfo.get("userId");
+        Long userId = userIdInteger.longValue();
+
+        // 1. Obtener todas las donaciones del usuario
+        List<Donation> donaciones = donationRepository.findByDonor(userId);
+
+        // 2. Si no tiene donaciones, salimos sin hacer nada
+        if (donaciones.isEmpty()) {
+            return;
+        }
+
+        // 3. Setear donor a null en cada una
+        for (Donation donacion : donaciones) {
+            donacion.setDonor(null);
+        }
+
+        // 4. Guardar los cambios
+        donationRepository.saveAll(donaciones);
+    }
+
+
 
 
     /**
