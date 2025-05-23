@@ -96,7 +96,6 @@ public class DonationServiceImpl implements DonationService {
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(List.of(itemRequest))
                     .backUrls(backUrls)
-                    .autoReturn("approved")
                     .build();
 
 
